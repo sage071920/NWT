@@ -1,0 +1,23 @@
+{
+  "sage": {
+    "username": "sage",
+    "password_hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+    "balance": 2550,
+    "history": [],
+    "role": "user"
+  },
+  "admin": {
+    "username": "admin",
+    "password_hash": "6d4525c2a21f9be1cca9e41f3aa402e0765ee5fcc3e7fea34a169b1730ae386e",
+    "balance": 511,
+    "history": [],
+    "role": "admin"
+  },
+  "admin1": {
+    "username": "admin1",
+    "password_hash": "65d8248bbf392055ab53864037cb2d548ad40506bc10cea5a272fb00ebc692a5",
+    "balance": 100,
+    "history": [],
+    "role": "user"
+  }
+}
