@@ -157,42 +157,40 @@ class AuthenticationManager():
 
 
 class SlotMachine():
-    SYMBOLS = ['🍒', '🍊', '🍇', '🔔', '🅱️', '7️⃣']
-
     def __init__(self, auth_manager):
         self.auth_manager = auth_manager
-        self.multiplier_dict = {
-            '🍒': {2: 1, 1: 1.5},
-            '🍊': {2: 1.5, 1: 1.75},
-            '🍇': {2: 1.75, 1: 2},
-            '🔔': {2: 2.5, 1: 2.75},
-            '🅱️': {2: 3, 1: 3.5},
-            '7️⃣': {2: 4, 1: 5}
-        }
-        self.weights = [
-            [6, 5, 4, 3, 2, 1],
-            [1, 2, 3, 4, 5, 6],
-            [1, 1, 1, 1, 1, 1],
-            [6, 5, 4, 3, 2, 1],
-            [1, 2, 3, 4, 5, 6],
-            [1, 1, 1, 1, 1, 1],
-            [6, 5, 4, 3, 2, 1],
-            [1, 2, 3, 4, 5, 6],
-            [1, 1, 1, 1, 1, 1]
-        ]
+        self.symbols = ['🍒', '🍊', '🍇', '🔔', '🅱️','7️⃣']
 
     def spin_reels(self):
-
-        reels = [
-            random.choices(self.SYMBOLS, weights=self.weights[i], k=1)[0] for i in range(9)
+        # Methode zum Drehen der Walzen des Spielautomaten
+        weights = [                 # TODO
+            [6, 5, 4, 3, 2, 1],
+            [1, 2, 3, 4, 5, 6],          
+            [1, 1, 1, 1, 1, 1],
+            [6, 5, 4, 3, 2, 1],
+            [1, 2, 3, 4, 5, 6],          
+            [1, 1, 1, 1, 1, 1],
+            [6, 5, 4, 3, 2, 1],
+            [1, 2, 3, 4, 5, 6],          
+            [1, 1, 1, 1, 1, 1]
         ]
+        reel1_1 = random.choices(self.symbols, weights=weights[0], k=1)[0]
+        reel2_1 = random.choices(self.symbols, weights=weights[1], k=1)[0]
+        reel3_1 = random.choices(self.symbols, weights=weights[2], k=1)[0]
+        reel4_2 = random.choices(self.symbols, weights=weights[3], k=1)[0]
+        reel5_2 = random.choices(self.symbols, weights=weights[4], k=1)[0]    
+        reel6_2 = random.choices(self.symbols, weights=weights[5], k=1)[0]
+        reel7_3 = random.choices(self.symbols, weights=weights[6], k=1)[0]
+        reel8_3 = random.choices(self.symbols, weights=weights[7], k=1)[0]
+        reel9_3 = random.choices(self.symbols, weights=weights[8], k=1)[0]
 
-        for i in range(0, 9, 3):
-            print(f'{reels[i]} | {reels[i + 1]} | {reels[i + 2]}')
-
-        return tuple(reels)
+        print(f'{reel1_1} | {reel2_1} | {reel3_1}')
+        print(f'{reel4_2} | {reel5_2} | {reel6_2}')
+        print(f'{reel7_3} | {reel8_3} | {reel9_3}')
+        return reel1_1, reel2_1, reel3_1, reel4_2, reel5_2, reel6_2, reel7_3, reel8_3, reel9_3
 
     def place_bet(self, bet_amount):
+        # Methode zum Platzieren einer Wette
         if bet_amount > self.auth_manager.current_user.balance:
             print("Nicht genügend Guthaben. Bitte platzieren Sie einen niedrigeren Einsatz.")
             return False
@@ -201,34 +199,51 @@ class SlotMachine():
             return True
 
     def calculate_payout(self, bet_amount, symbols):
-        winning_combinations = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8],  # Rows
-            [0, 3, 6], [1, 4, 7], [2, 5, 8],  # Columns
-            [0, 4, 8], [2, 4, 6]              # Diagonals
-        ]
+        # Methode zur Berechnung der Auszahlung basierend auf den Symbolen
+        multiplier_dict = {
+            '🍒': {2: 1, 1: 1.5},
+            '🍊': {2: 1.5, 1: 1.75},
+            '🍇': {2: 1.75, 1: 2},
+            '🔔': {2: 2.5, 1: 2.75},
+            '🅱️': {2: 3, 1: 3.5},
+            '7️⃣': {2: 4, 1: 5}
+        }
 
-        max_multiplier = 0
-
-        for combo in winning_combinations:
-            current_multiplier = 0
-
-            if symbols[combo[0]] == symbols[combo[1]] == symbols[combo[2]]:
-                current_multiplier = self.multiplier_dict.get(symbols[combo[0]], {}).get(1, 0) if symbols[combo[0]] in self.multiplier_dict else 0
-            elif symbols[combo[0]] == symbols[combo[1]] or symbols[combo[0]] == symbols[combo[2]]:
-                current_multiplier = self.multiplier_dict.get(symbols[combo[0]], {}).get(2, 0) if symbols[combo[0]] in self.multiplier_dict else 0
-            elif symbols[combo[1]] == symbols[combo[2]]:
-                current_multiplier = self.multiplier_dict.get(symbols[combo[1]], {}).get(2, 0) if symbols[combo[1]] in self.multiplier_dict else 0
-
-            max_multiplier = max(max_multiplier, current_multiplier)
-
-        return int(bet_amount * max_multiplier)
+        if symbols[0] == symbols[1] == symbols[2]:
+            multiplier = multiplier_dict.get(symbols[0], {}).get(1, 0)
+        elif symbols[0] == symbols[1] or symbols[0] == symbols[2]:
+            multiplier = multiplier_dict.get(symbols[0], {}).get(2, 0)
+        elif symbols[1] == symbols[2]:
+            multiplier = multiplier_dict.get(symbols[1], {}).get(2, 0)
+        elif symbols[3] == symbols[4] == symbols[5]:
+            multiplier = multiplier_dict.get(symbols[3], {}).get(1, 0)
+        elif symbols[3] == symbols[4] or symbols[3] == symbols[5]:
+            multiplier = multiplier_dict.get(symbols[3], {}).get(2, 0)
+        elif symbols[4] == symbols[5]:
+            multiplier = multiplier_dict.get(symbols[4], {}).get(2, 0)
+        elif symbols[6] == symbols[7] == symbols[8]:
+            multiplier = multiplier_dict.get(symbols[6], {}).get(1, 0)
+        elif symbols[6] == symbols[7] or symbols[6] == symbols[8]:
+            multiplier = multiplier_dict.get(symbols[6], {}).get(2, 0)
+        elif symbols[7] == symbols[8]:
+            multiplier = multiplier_dict.get(symbols[7], {}).get(2, 0)
+        elif symbols[6] == symbols[4] == symbols[2]:
+            multiplier = multiplier_dict.get(symbols[6], {}).get(1, 0)
+        elif symbols[0] == symbols[4] == symbols[8]:
+            multiplier = multiplier_dict.get(symbols[0], {}).get(1, 0)
+        else:
+            multiplier = 0
+        
+        return int(bet_amount * multiplier)
 
     def display_history(self):
+        # Methode zur Anzeige der Gewinnhistorie des Benutzers
         print("Gewinnhistorie:")
         for item in self.auth_manager.current_user.history:
             print(item)
 
     def play(self):
+        # Methode zum Spielen des Spielautomaten
         while True:
             try:
                 print(f"Aktuelles Guthaben: {self.auth_manager.current_user.balance}")
@@ -239,10 +254,10 @@ class SlotMachine():
                     self.auth_manager.current_user.history.append(f"Beenden: Guthaben: {self.auth_manager.current_user.balance}")
                     auth_manager.save_user_data()
                     break
-
+                
                 if bet_amount < 0:
-                    print('ungültiger Einsatz')
-                    continue
+                    print('ungültiger Einsatz, neuer Einsatz wird auf 1 gesetzt')
+                    bet_amount = 1
 
                 if self.place_bet(bet_amount):
                     symbols = self.spin_reels()
