@@ -3,10 +3,20 @@ from machine_i2c_lcd import I2cLcd
 import time
 import sys
 
-from random import *
+import random
 
 
 class SlotMachine():
+
+ def weighted_choice(self, choices, weights):
+    total = sum(weights)
+    r = random.uniform(0, total)
+    current_sum = 0 
+    for choice, weight in zip(choices, weights):
+         current_sum += weight
+         if r <= current_sum:
+             return choice
+
  def __init__(self):
      self.joystick_x_pin = ADC(Pin(26))  
      self.joystick_y_pin = ADC(Pin(27))  
@@ -61,9 +71,9 @@ class SlotMachine():
          [1, 2, 3, 4, 5, 6],          
          [1, 1, 1, 1, 1, 1]
      ]
-     reel1_1 = random.choices(self.symbols, weights=weights[0], k=1)[0]
-     reel2_1 = random.choices(self.symbols, weights=weights[1], k=1)[0]
-     reel3_1 = random.choices(self.symbols, weights=weights[2], k=1)[0]
+     reel1_1 = self.weighted_choice(self.symbols, weights[0])
+     reel2_1 = self.weighted_choice(self.symbols, weights[1])
+     reel3_1 = self.weighted_choice(self.symbols, weights[2])
      print(f'{reel1_1} | {reel2_1} | {reel3_1}')
      return reel1_1, reel2_1, reel3_1
  def place_bet(self, bet_amount):
